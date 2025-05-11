@@ -1,0 +1,20 @@
+# docker-compose.yml
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    env_file: .env
+    ports:
+      - "5433:5432"            # expose to your host on localhost:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
